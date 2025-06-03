@@ -395,4 +395,28 @@
       document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
 
       // วันที่ฝั่งนาฬิกา
-      const day = now.getDate().
+      const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      document.getElementById('left-date').textContent = now.toLocaleDateString('th-TH', dateOptions);
+
+      // เวลาแบบดิจิทัล
+      const hoursStr = hours.toString().padStart(2, '0');
+      const minutesStr = minutes.toString().padStart(2, '0');
+      const secondsStr = seconds.toString().padStart(2, '0');
+
+      document.getElementById('digital-time').textContent = `${hoursStr}:${minutesStr}:${secondsStr}`;
+      document.getElementById('digital-date').textContent = now.toLocaleDateString('th-TH', dateOptions);
+    }
+
+    // เรียกฟังก์ชันครั้งแรก
+    updateClock();
+
+    // ให้ฟังก์ชัน updateClock ทำงานทุก ๆ 1 วินาที
+    setInterval(updateClock, 1000);
+
+    // ฟังก์ชันเปลี่ยนธีม
+    function toggleTheme() {
+      document.body.classList.toggle('night-mode');
+    }
+  </script>
+</body>
+</html>
