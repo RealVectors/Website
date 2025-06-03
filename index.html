@@ -268,6 +268,75 @@
     body.night-mode .toggle-btn:hover {
       background-color: #47478acc;
     }
+
+    /* === ส่วนเพิ่ม Responsive สำหรับมือถือ === */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 20px;
+        gap: 30px;
+      }
+
+      .left-side, .right-side {
+        flex: none;
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .clock-container {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 15px auto;
+      }
+
+      .clock-face {
+        width: 170px;
+        height: 170px;
+        border-width: 6px;
+      }
+
+      .hand.hour-hand {
+        width: 6px;
+        height: 45px;
+      }
+
+      .hand.minute-hand {
+        width: 4px;
+        height: 65px;
+      }
+
+      .hand.second-hand {
+        width: 1.5px;
+        height: 75px;
+      }
+
+      .number {
+        font-size: 1em;
+      }
+
+      .left-date {
+        font-size: 1em;
+        text-align: center;
+      }
+
+      .digital-time {
+        font-size: 3em;
+        letter-spacing: 3px;
+        text-align: center;
+      }
+
+      .digital-date {
+        font-size: 1.2em;
+        text-align: center;
+      }
+
+      .toggle-btn {
+        bottom: 20px;
+        padding: 10px 20px;
+        font-size: 1em;
+      }
+    }
   </style>
 </head>
 <body>
@@ -326,54 +395,4 @@
       document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
 
       // วันที่ฝั่งนาฬิกา
-      const day = now.getDate().toString().padStart(2, '0');
-      const month = (now.getMonth() + 1).toString().padStart(2, '0');
-      const year = now.getFullYear();
-      document.getElementById('left-date').textContent = `${day}/${month}/${year}`;
-
-      // เวลาดิจิทัล
-      const hours24 = hours.toString().padStart(2, '0');
-      const minutes24 = minutes.toString().padStart(2, '0');
-      const seconds24 = seconds.toString().padStart(2, '0');
-      document.getElementById('digital-time').textContent = `${hours24}:${minutes24}:${seconds24}`;
-
-      // วันที่ดิจิทัล
-      document.getElementById('digital-date').textContent = `${day}/${month}/${year}`;
-    }
-
-    function applyTheme(mode) {
-      const body = document.body;
-
-      if (mode === 'night') {
-        body.classList.add('night-mode');
-        body.classList.remove('day-mode');
-      } else {
-        body.classList.add('day-mode');
-        body.classList.remove('night-mode');
-      }
-    }
-
-    function autoThemeByTime() {
-      const hour = new Date().getHours();
-      if (hour >= 18 || hour < 6) {
-        applyTheme('night');
-      } else {
-        applyTheme('day');
-      }
-    }
-
-    function toggleTheme() {
-      const body = document.body;
-      if (body.classList.contains('night-mode')) {
-        applyTheme('day');
-      } else {
-        applyTheme('night');
-      }
-    }
-
-    setInterval(updateClock, 1000);
-    updateClock();
-    autoThemeByTime();
-  </script>
-</body>
-</html>
+      const day = now.getDate().
