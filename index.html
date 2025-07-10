@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Clock</title>
+    <title>นาฬิกาดิจิทัล</title>
     <style>
         * {
             margin: 0;
@@ -14,57 +14,106 @@
         body {
             font-family: 'Arial', sans-serif;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             transition: background 0.5s ease;
             color: white;
         }
 
-        .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+        .clock-container {
+            background: rgba(75, 85, 99, 0.8);
             border-radius: 20px;
             padding: 40px;
+            position: relative;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .clock {
-            font-size: 4rem;
-            font-weight: bold;
+        .settings-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            fill: white;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .settings-icon:hover {
+            opacity: 1;
+        }
+
+        .time-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-box {
+            background: rgba(45, 55, 72, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            min-width: 100px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
             font-family: 'Courier New', monospace;
         }
 
-        .date {
+        .time-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: capitalize;
+        }
+
+        .separator {
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .period {
+            position: absolute;
+            top: 60px;
+            right: 60px;
             font-size: 1.5rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
+            font-weight: bold;
+            color: white;
         }
 
         .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             gap: 15px;
-            justify-content: center;
             flex-wrap: wrap;
-            margin-top: 30px;
+            justify-content: center;
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 25px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .btn-black {
@@ -89,166 +138,196 @@
             box-shadow: 0 4px 12px rgba(255, 255, 255, 0.4);
         }
 
-        .title {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        .settings-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(45, 55, 72, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
         }
 
-        .background-options {
+        .settings-panel.active {
+            display: block;
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .background-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
-            .clock {
-                font-size: 2.5rem;
-            }
-            
-            .title {
+            .time-number {
                 font-size: 2rem;
             }
             
-            .container {
+            .time-box {
+                padding: 15px;
+                min-width: 80px;
+            }
+            
+            .clock-container {
                 padding: 20px;
                 margin: 20px;
             }
             
             .controls {
+                bottom: 20px;
                 flex-direction: column;
                 align-items: center;
-            }
-            
-            .btn {
-                width: 200px;
             }
         }
 
         /* Background classes */
-        .bg-gradient-1 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .bg-gradient-2 {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .bg-gradient-3 {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .bg-gradient-4 {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
-
-        .bg-gradient-5 {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-
-        .bg-gradient-6 {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-        }
-
-        .bg-gradient-7 {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-        }
-
-        .bg-gradient-8 {
-            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-        }
+        .bg-1 { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+        .bg-2 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-3 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .bg-4 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .bg-5 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .bg-6 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .bg-7 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .bg-8 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .bg-9 { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
     </style>
 </head>
-<body class="bg-gradient-1">
-    <div class="container">
-        <h1 class="title">Digital Clock</h1>
+<body class="bg-1">
+    <div class="clock-container">
+        <svg class="settings-icon" onclick="toggleSettings()" viewBox="0 0 24 24">
+            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+        </svg>
         
-        <div class="clock" id="clock">00:00:00</div>
+        <div class="period" id="period">PM</div>
         
-        <div class="date" id="date">Monday, January 1, 2024</div>
-        
-        <div class="controls">
-            <button class="btn btn-black" onclick="toggleFormat()">12/24 Hour</button>
-            <button class="btn btn-white" onclick="toggleSeconds()">Show/Hide Seconds</button>
-        </div>
-        
-        <div class="background-options">
-            <button class="btn btn-black" onclick="changeBackground(1)">Purple</button>
-            <button class="btn btn-white" onclick="changeBackground(2)">Pink</button>
-            <button class="btn btn-black" onclick="changeBackground(3)">Blue</button>
-            <button class="btn btn-white" onclick="changeBackground(4)">Green</button>
-            <button class="btn btn-black" onclick="changeBackground(5)">Orange</button>
-            <button class="btn btn-white" onclick="changeBackground(6)">Pastel</button>
-            <button class="btn btn-black" onclick="changeBackground(7)">Coral</button>
-            <button class="btn btn-white" onclick="changeBackground(8)">Lavender</button>
+        <div class="time-display">
+            <div class="time-box">
+                <div class="time-number" id="hours">10</div>
+                <div class="time-label">ชั่วโมง</div>
+            </div>
+            
+            <div class="separator">:</div>
+            
+            <div class="time-box">
+                <div class="time-number" id="minutes">42</div>
+                <div class="time-label">นาที</div>
+            </div>
+            
+            <div class="separator">:</div>
+            
+            <div class="time-box">
+                <div class="time-number" id="seconds">19</div>
+                <div class="time-label">วินาที</div>
+            </div>
         </div>
     </div>
 
-    <script>
-        let is24Hour = true;
-        let showSeconds = true;
+    <div class="settings-panel" id="settingsPanel">
+        <button class="close-btn" onclick="toggleSettings()">&times;</button>
+        <div class="settings-title">เปลี่ยนพื้นหลัง</div>
+        <div class="background-grid">
+            <button class="btn btn-black" onclick="changeBackground(1)">เทา</button>
+            <button class="btn btn-white" onclick="changeBackground(2)">ม่วง</button>
+            <button class="btn btn-black" onclick="changeBackground(3)">ชมพู</button>
+            <button class="btn btn-white" onclick="changeBackground(4)">ฟ้า</button>
+            <button class="btn btn-black" onclick="changeBackground(5)">เขียว</button>
+            <button class="btn btn-white" onclick="changeBackground(6)">ส้ม</button>
+            <button class="btn btn-black" onclick="changeBackground(7)">พาสเทล</button>
+            <button class="btn btn-white" onclick="changeBackground(8)">คอรัล</button>
+            <button class="btn btn-black" onclick="changeBackground(9)">ลาเวนเดอร์</button>
+        </div>
+    </div>
 
+    <div class="controls">
+        <button class="btn btn-black" onclick="toggleSettings()">ตั้งค่า</button>
+        <button class="btn btn-white" onclick="resetBackground()">รีเซ็ต</button>
+    </div>
+
+    <script>
         function updateClock() {
             const now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes();
-            let seconds = now.getSeconds();
-            let ampm = '';
-
-            if (!is24Hour) {
-                ampm = hours >= 12 ? ' PM' : ' AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12;
-            }
-
-            hours = hours.toString().padStart(2, '0');
-            minutes = minutes.toString().padStart(2, '0');
-            seconds = seconds.toString().padStart(2, '0');
-
-            let timeString = `${hours}:${minutes}`;
-            if (showSeconds) {
-                timeString += `:${seconds}`;
-            }
-            timeString += ampm;
-
-            document.getElementById('clock').textContent = timeString;
+            
+            // Convert to Thailand timezone (UTC+7)
+            const thailandTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Bangkok"}));
+            
+            let hours = thailandTime.getHours();
+            let minutes = thailandTime.getMinutes();
+            let seconds = thailandTime.getSeconds();
+            
+            // Determine AM/PM
+            const period = hours >= 12 ? 'PM' : 'AM';
+            
+            // Convert to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 should be 12
+            
+            // Format with leading zeros
+            const formattedHours = hours.toString().padStart(2, '0');
+            const formattedMinutes = minutes.toString().padStart(2, '0');
+            const formattedSeconds = seconds.toString().padStart(2, '0');
+            
+            // Update display
+            document.getElementById('hours').textContent = formattedHours;
+            document.getElementById('minutes').textContent = formattedMinutes;
+            document.getElementById('seconds').textContent = formattedSeconds;
+            document.getElementById('period').textContent = period;
         }
 
-        function updateDate() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
-            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
-        }
-
-        function toggleFormat() {
-            is24Hour = !is24Hour;
-            updateClock();
-        }
-
-        function toggleSeconds() {
-            showSeconds = !showSeconds;
-            updateClock();
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            panel.classList.toggle('active');
         }
 
         function changeBackground(bgNumber) {
-            document.body.className = `bg-gradient-${bgNumber}`;
+            document.body.className = `bg-${bgNumber}`;
+            toggleSettings(); // Close settings panel after selection
         }
+
+        function resetBackground() {
+            document.body.className = 'bg-1';
+        }
+
+        // Close settings panel when clicking outside
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('settingsPanel');
+            const settingsIcon = document.querySelector('.settings-icon');
+            const settingsBtn = document.querySelector('.controls .btn-black');
+            
+            if (!panel.contains(event.target) && 
+                !settingsIcon.contains(event.target) && 
+                !settingsBtn.contains(event.target)) {
+                panel.classList.remove('active');
+            }
+        });
 
         // Initialize clock
         updateClock();
-        updateDate();
-
+        
         // Update clock every second
         setInterval(updateClock, 1000);
-        
-        // Update date every minute
-        setInterval(updateDate, 60000);
     </script>
 </body>
 </html>
